@@ -1,0 +1,76 @@
+name: Add a job board
+description: Suggest a GitHub repository to include in the awesome list.
+title: "Add: owner/repository"
+labels:
+  - addition
+body:
+  - type: input
+    id: repository
+    attributes:
+      label: Repository
+      description: Use the GitHub owner/repository format.
+      placeholder: frontendbr/vagas
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: URL
+      placeholder: https://github.com/frontendbr/vagas
+    validations:
+      required: true
+  - type: dropdown
+    id: region
+    attributes:
+      label: Region
+      options:
+        - Global
+        - Africa
+        - Asia
+        - Europe
+        - North America
+        - South America
+        - Oceania
+    validations:
+      required: true
+  - type: input
+    id: country
+    attributes:
+      label: Country
+      placeholder: Brazil
+    validations:
+      required: true
+  - type: input
+    id: locale
+    attributes:
+      label: Locale
+      description: Use a BCP 47 locale when possible.
+      placeholder: pt-BR
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - global
+        - national
+        - regional
+        - city
+    validations:
+      required: true
+  - type: input
+    id: evidence
+    attributes:
+      label: Evidence of GitHub-hosted jobs
+      description: Link to issues, a jobs folder, or another GitHub-hosted source in the repository.
+      placeholder: https://github.com/frontendbr/vagas/issues
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Add any useful context for maintainers.
+    validations:
+      required: false

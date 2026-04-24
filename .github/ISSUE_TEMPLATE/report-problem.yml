@@ -1,0 +1,35 @@
+name: Report a problem
+description: Report a broken link, inactive source, duplicate, or inaccurate metadata.
+title: "Problem: owner/repository"
+labels:
+  - correction
+body:
+  - type: input
+    id: repository
+    attributes:
+      label: Repository or entry
+      placeholder: frontendbr/vagas
+    validations:
+      required: true
+  - type: dropdown
+    id: problem
+    attributes:
+      label: Problem type
+      options:
+        - Broken link
+        - Duplicate entry
+        - Inactive repository
+        - Incorrect country or region
+        - Incorrect locale or scope
+        - Not a GitHub Issues job board
+        - Unsafe or suspicious link
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Explain what should be fixed and include supporting links when possible.
+    validations:
+      required: true
