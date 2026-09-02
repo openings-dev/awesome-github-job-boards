@@ -1,0 +1,52 @@
+name: Update Generated Directory
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 5 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-generated-directory
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout directory
+        uses: actions/checkout@v4
+
+      - name: Checkout public catalog
+        uses: actions/checkout@v4
+        with:
+          repository: openings-dev/data-pipeline
+          ref: main
+          path: .catalog-data
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate generator
+        run: npm test
+
+      - name: Generate directory
+        run: npm run generate -- .catalog-data/src/modules/catalog/repositories.json
+
+      - name: Commit changed directory
+        run: |
+          if git diff --quiet -- README.md; then
+            echo "Directory is already current."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs: refresh generated jobs directory"
+          git push

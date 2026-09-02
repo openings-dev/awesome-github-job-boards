@@ -1,0 +1,13 @@
+{
+  "name": "@openings-dev/awesome-github-issues-job-boards",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate-readme.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
