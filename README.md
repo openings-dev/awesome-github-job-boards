@@ -2,7 +2,7 @@
 
 > A living directory of public GitHub communities and repositories where technology jobs are shared, tracked, or proposed.
 
-[Search the live jobs on openings.dev](https://openings.dev) · [Star the official project](https://github.com/openings-dev/web) · [Suggest a source](https://github.com/openings-dev/web/issues/new?template=source_request.yml)
+[Search the live jobs on openings.dev](https://openings.dev) · [Star the official project](https://github.com/openings-dev/web) · [Suggest a source](https://github.com/openings-dev/web/issues/new?template=source_repository.yml)
 
 ## What this directory gives you
 

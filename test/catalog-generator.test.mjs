@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import {
   parseCatalog,
@@ -46,4 +47,13 @@ test("renders the human introduction around generated content", () => {
   assert.match(result, /Total: 4/u);
   assert.match(result, /Updated: 2026-09-02/u);
   assert.match(result, /beta\/jobs/u);
+});
+
+test("routes source suggestions to the current openings.dev form", async () => {
+  const [template, submissions] = await Promise.all([
+    readFile("templates/README.md", "utf8"),
+    readFile("SUBMISSIONS.md", "utf8"),
+  ]);
+  assert.match(template, /template=source_repository\.yml/u);
+  assert.match(submissions, /template=source_repository\.yml/u);
 });
