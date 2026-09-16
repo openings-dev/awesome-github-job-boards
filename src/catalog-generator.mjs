@@ -48,6 +48,12 @@ function compareCountries(left, right) {
   return left.localeCompare(right, "en");
 }
 
+function compareCodePoints(left, right) {
+  if (left < right) return -1;
+  if (left > right) return 1;
+  return 0;
+}
+
 export function parseCatalog(value) {
   const source = record(value, "catalog");
   const generatedAt = text(source.generatedAt, "catalog date");
@@ -91,7 +97,8 @@ export function parseCatalog(value) {
     regionRank(left.region) - regionRank(right.region) ||
     left.region.localeCompare(right.region, "en") ||
     compareCountries(left.country, right.country) ||
-    left.repository.localeCompare(right.repository, "en", { sensitivity: "base" }));
+    left.repository.localeCompare(right.repository, "en", { sensitivity: "base" }) ||
+    compareCodePoints(left.repository, right.repository));
   return { generatedAt, repositories };
 }
 

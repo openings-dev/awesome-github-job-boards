@@ -98,6 +98,23 @@ test("orders repositories deterministically by region, country, and repository",
   ]);
 });
 
+test("uses a code-point tiebreaker for locale-equivalent repository names", () => {
+  const item = (repository) => ({
+    repository,
+    url: `https://github.com/${repository}`,
+    country: "Global",
+    countryCode: "GLOBAL",
+    region: "Global",
+    locale: "en",
+    scope: "global",
+  });
+  const accentedFirst = parseCatalog(catalog([item("é/jobs"), item("e/jobs")]));
+  const plainFirst = parseCatalog(catalog([item("e/jobs"), item("é/jobs")]));
+
+  assert.deepEqual(accentedFirst.repositories.map(({ repository }) => repository), ["e/jobs", "é/jobs"]);
+  assert.equal(serializeCatalog(accentedFirst), serializeCatalog(plainFirst));
+});
+
 test("serializes formatted JSON with exactly one final newline", () => {
   const parsed = parseCatalog(catalog());
   const serialized = serializeCatalog(parsed);
