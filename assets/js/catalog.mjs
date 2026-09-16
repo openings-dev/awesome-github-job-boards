@@ -114,6 +114,7 @@ export function initCatalog(root, catalog) {
   };
   const repositories = Array.isArray(catalog) ? catalog : catalog?.repositories;
   if (!Array.isArray(repositories)) {
+    if (elements.count) elements.count.textContent = "0";
     setVisible(elements.error, true);
     setVisible(elements.empty, false);
     setVisible(elements.results, false);

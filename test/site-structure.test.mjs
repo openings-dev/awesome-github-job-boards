@@ -70,6 +70,20 @@ test("results include live count, semantic card template, and initial states", a
   assert.match(results, /data-catalog-error[^>]+hidden/u);
 });
 
+test("results render navigable catalog cards before JavaScript initializes", async () => {
+  const results = await read("_includes/catalog-results.html");
+  const containerStart = results.indexOf("data-catalog-results>");
+  const containerEnd = results.indexOf('<div class="catalog-state"', containerStart);
+  const container = results.slice(containerStart, containerEnd);
+
+  assert.ok(containerStart >= 0 && containerEnd > containerStart, "expected server-rendered content inside the results container");
+  assert.match(container, /\{%\s*for\s+item\s+in\s+site\.data\.catalog\.repositories\s*%\}/u);
+  assert.match(container, /\{\{\s*item\.repository\s*\|\s*escape\s*\}\}/u);
+  assert.match(container, /href="\{\{\s*item\.url\s*\|\s*escape\s*\}\}"/u);
+  assert.match(container, /\{%\s*if\s+item\.description\s*%\}/u);
+  assert.match(container, /\{%\s*endfor\s*%\}/u);
+});
+
 test("site configuration uses the canonical project metadata without a theme", async () => {
   const config = await read("_config.yml");
 

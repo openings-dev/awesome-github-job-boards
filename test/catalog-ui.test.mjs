@@ -188,6 +188,7 @@ function fakeCatalogDom() {
 
 test("initializes and drives the catalog DOM without treating data as HTML", () => {
   const { controls, elements, root } = fakeCatalogDom();
+  elements.results.children.push({ serverRenderedFallback: true });
   const hostile = {
     ...items[0],
     repository: "<img src=x onerror=alert(1)>",
@@ -208,6 +209,7 @@ test("initializes and drives the catalog DOM without treating data as HTML", () 
     assert.equal(elements.count.textContent, "1");
     assert.equal(elements.count.attributes["aria-live"], "polite");
     assert.equal(elements.results.children.length, 1);
+    assert.equal(elements.results.children.some(({ serverRenderedFallback }) => serverRenderedFallback), false);
     assert.equal(elements.results.children[0].fields[0].textContent, hostile.repository);
     assert.equal(elements.results.children[0].fields[1].textContent, hostile.description);
     assert.equal(elements.results.children[0].link.href, hostile.url);
@@ -240,8 +242,10 @@ test("initializes and drives the catalog DOM without treating data as HTML", () 
 
 test("shows an error state for an invalid catalog", () => {
   const { elements, root } = fakeCatalogDom();
+  elements.count.textContent = "187";
   assert.equal(initCatalog(root, { repositories: null }), null);
   assert.equal(elements.error.hidden, false);
   assert.equal(elements.empty.hidden, true);
   assert.equal(elements.results.hidden, true);
+  assert.equal(elements.count.textContent, "0");
 });
