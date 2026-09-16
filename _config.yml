@@ -1,25 +1,18 @@
-title: "Awesome GitHub Issues Job Boards"
-description: "A curated list of community job boards and job-tracking repositories powered by GitHub Issues."
+title: "Awesome GitHub Job Boards"
+description: "Community-driven technology job boards hosted on GitHub."
 url: "https://openings-dev.github.io"
-baseurl: "/awesome-github-issues-job-boards"
-repository: "openings-dev/awesome-github-issues-job-boards"
-theme: "jekyll-theme-cayman"
+baseurl: "/awesome-github-job-boards"
+repository: "openings-dev/awesome-github-job-boards"
 plugins:
   - jekyll-seo-tag
-  - jekyll-relative-links
 markdown: "kramdown"
-highlighter: "rouge"
 kramdown:
   input: GFM
 exclude:
-  - CONTRIBUTING.md
-  - CODE_OF_CONDUCT.md
-  - LICENSE
-  - SECURITY.md
-  - .github/
-defaults:
-  - scope:
-      path: ""
-      type: "pages"
-    values:
-      layout: "default"
+  - node_modules
+  - test
+  - scripts
+  - src
+  - docs
+  - Gemfile
+  - Gemfile.lock

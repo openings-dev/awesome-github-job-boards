@@ -1,0 +1,22 @@
+<section class="catalog-results" aria-labelledby="results-title">
+  <div class="catalog-results__summary">
+    <h2 id="results-title">Catalog results</h2>
+    <p><strong id="catalog-count" data-catalog-count aria-live="polite">{{ site.data.catalog.repositories | size }}</strong> sources found</p>
+  </div>
+  <div class="catalog-results__grid" id="catalog-results" data-catalog-results></div>
+  <div class="catalog-state" id="catalog-empty" data-catalog-empty hidden><h3>No sources match these filters</h3><p>Try a broader search or clear the filters to see the full directory.</p></div>
+  <div class="catalog-state catalog-state--error" id="catalog-error" data-catalog-error hidden role="alert"><h3>The catalog could not be loaded</h3><p>Refresh the page or browse the source repository directly on GitHub.</p></div>
+</section>
+<template id="catalog-card-template" data-catalog-card-template>
+  <article class="catalog-card">
+    <div class="catalog-card__body">
+      <h3 class="catalog-card__title" data-catalog-field="repository"></h3>
+      <p class="catalog-card__description" data-catalog-field="description"></p>
+      <dl class="catalog-card__metadata">
+        <div><dt>Region</dt><dd data-catalog-field="region"></dd></div><div><dt>Country</dt><dd data-catalog-field="country"></dd></div>
+        <div><dt>Locale</dt><dd data-catalog-field="locale"></dd></div><div><dt>Scope</dt><dd data-catalog-field="scope"></dd></div>
+      </dl>
+    </div>
+    <a class="catalog-card__link" data-catalog-link href="#">Explore on GitHub <span aria-hidden="true">↗</span></a>
+  </article>
+</template>

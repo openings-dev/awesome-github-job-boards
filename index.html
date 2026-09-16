@@ -1,0 +1,30 @@
+---
+layout: catalog
+title: Catalog
+---
+{% assign repositories = site.data.catalog.repositories %}
+{% assign countries = repositories | map: "country" | compact | uniq %}
+{% assign locales = repositories | map: "locale" | compact | uniq %}
+<div class="catalog" data-catalog-root>
+  <section class="catalog-hero" aria-labelledby="catalog-title">
+    <div class="site-shell catalog-hero__inner">
+      <p class="catalog-hero__eyebrow">Community-maintained directory</p>
+      <h1 id="catalog-title">Find technology job boards hosted on GitHub</h1>
+      <p class="catalog-hero__intro">Explore open repositories where communities publish roles, share opportunities, and keep local job markets visible.</p>
+      <dl class="catalog-stats" aria-label="Catalog overview">
+        <div><dt>Sources</dt><dd>{{ repositories | size }}</dd></div>
+        <div><dt>Countries</dt><dd>{{ countries | size }}</dd></div>
+        <div><dt>Locales</dt><dd>{{ locales | size }}</dd></div>
+      </dl>
+    </div>
+  </section>
+  <section class="site-shell catalog-browser" aria-labelledby="browse-title">
+    <div class="catalog-browser__heading">
+      <div><p class="catalog-browser__eyebrow">Browse the directory</p><h2 id="browse-title">Explore job board sources</h2></div>
+      <p>Looking for current openings instead? <a href="https://openings.dev">Search jobs on openings.dev</a>.</p>
+    </div>
+    {% include catalog-filters.html %}
+    {% include catalog-results.html %}
+  </section>
+</div>
+<script type="application/json" id="catalog-data" data-catalog-data>{{ site.data.catalog | jsonify }}</script>
