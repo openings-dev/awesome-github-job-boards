@@ -11,7 +11,6 @@ This is an editorial selection of useful, documented boards maintained by techno
 - [Asia](#asia)
 - [Europe](#europe)
 - [North America](#north-america)
-- [Oceania](#oceania)
 - [South America](#south-america)
 
 ## Global
@@ -43,13 +42,9 @@ This is an editorial selection of useful, documented boards maintained by techno
 ## North America
 
 - [hanzili/canada_sde_intern_position](https://github.com/hanzili/canada_sde_intern_position) - Tracks internships and co-op opportunities across Canada.
-- [SimplifyJobs/New-Grad-Positions](https://github.com/SimplifyJobs/New-Grad-Positions) - Tracks full-time software, quantitative, and product roles for new graduates.
-- [vanshb03/New-Grad-2027](https://github.com/vanshb03/New-Grad-2027) - Tracks full-time software, quantitative, and product roles for new graduates.
+- [SimplifyJobs/New-Grad-Positions](https://github.com/SimplifyJobs/New-Grad-Positions) - Maintains a regularly updated collection of software, quantitative, and product roles for new graduates.
+- [vanshb03/New-Grad-2027](https://github.com/vanshb03/New-Grad-2027) - Organizes North American new graduate openings by role and location.
 - [vlltr/trabajos-sv](https://github.com/vlltr/trabajos-sv) - Lists employers offering roles in El Salvador.
-
-## Oceania
-
-- [AusJobs/Australia-Tech-Internship](https://github.com/AusJobs/Australia-Tech-Internship) - Collects technology internship opportunities in Australia.
 
 ## South America
 
