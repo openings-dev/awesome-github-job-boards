@@ -1,6 +1,6 @@
-name: Add a job board
-description: Suggest a GitHub repository to include in the awesome list.
-title: "Add: owner/repository"
+name: Nominate a curated job board
+description: Nominate an exceptional GitHub job board for editorial review in Awesome GitHub Job Boards.
+title: "Nominate: owner/repository"
 labels:
   - addition
 body:
@@ -12,6 +12,12 @@ body:
       placeholder: frontendbr/vagas
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: |
+        This form is for editorial nominations to the curated README. Inclusion is not guaranteed.
+
+        To add an eligible source to the complete openings.dev catalog, use the [source request form](https://github.com/openings-dev/web/issues/new?template=source_repository.yml) instead.
   - type: input
     id: url
     attributes:
@@ -62,15 +68,15 @@ body:
   - type: input
     id: evidence
     attributes:
-      label: Evidence of GitHub-hosted jobs
-      description: Link to issues, a jobs folder, or another GitHub-hosted source in the repository.
+      label: Editorial evidence
+      description: Link to recent GitHub-hosted job activity and explain why this board is notably useful, active, and trustworthy.
       placeholder: https://github.com/frontendbr/vagas/issues
     validations:
       required: true
   - type: textarea
-    id: notes
+    id: rationale
     attributes:
-      label: Notes
-      description: Add any useful context for maintainers.
+      label: Why should this board be curated?
+      description: Describe its audience, track record, moderation, and value to readers of Awesome GitHub Job Boards.
     validations:
-      required: false
+      required: true

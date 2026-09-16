@@ -2,12 +2,19 @@
 
 - 
 
+## Contribution type
+
+- [ ] Curated README nomination
+- [ ] Catalog site, code, documentation, or maintenance
+
 ## Checklist
 
-- [ ] The repository is public.
-- [ ] Jobs are posted through GitHub Issues or clearly linked from GitHub-hosted content.
-- [ ] The entry is placed under the correct region and country.
-- [ ] The entry uses `owner/repository` as the link text.
-- [ ] The scope and locale are included.
-- [ ] The entry is not already listed.
-- [ ] The entry is sorted alphabetically within its country section.
+- [ ] I described the change and tested it where applicable.
+- [ ] I understand the README is a manually curated Awesome GitHub Job Boards list, while the website contains the complete source catalog.
+
+### Curated README nominations only
+
+- [ ] The repository is public and actively publishes technology jobs through GitHub Issues or other GitHub-hosted content.
+- [ ] I linked evidence of recent, relevant job activity and explained why this board merits editorial inclusion.
+- [ ] The entry uses `owner/repository` as its link text and is placed alphabetically in the correct region and country.
+- [ ] The scope and locale are accurate, and the entry is not already listed.
