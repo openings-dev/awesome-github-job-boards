@@ -28,6 +28,9 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Check canonical name
+        run: npm run lint:name
+
       - name: Lint Awesome list
         run: npm run lint:awesome
 

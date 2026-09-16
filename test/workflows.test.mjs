@@ -56,6 +56,7 @@ test("validation workflow checks the awesome list and builds the site", async ()
   });
   assert.equal(stepNamed(validate, "Install Node.js dependencies").run, "npm ci");
   assert.equal(stepNamed(validate, "Run tests").run, "npm test");
+  assert.equal(stepNamed(validate, "Check canonical name").run, "npm run lint:name");
   assert.equal(stepNamed(validate, "Lint Awesome list").run, "npm run lint:awesome");
   assert.deepEqual(stepNamed(validate, "Setup Ruby"), {
     name: "Setup Ruby",
