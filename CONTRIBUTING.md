@@ -1,80 +1,39 @@
 # Contributing
 
-Thanks for helping improve Awesome GitHub Issues Job Boards.
+There are two ways to suggest a GitHub job board. Choose the path that matches your goal.
 
-This repository curates public GitHub repositories where developer jobs are posted, tracked, or indexed. The ideal entry is a community job board powered directly by GitHub Issues.
+## Nominate a Board for the Editorial List
 
-## What Belongs Here
+Open a pull request that adds one entry to `README.md`. A nomination should provide evidence that the repository:
 
-A good entry should:
+- Has recent, meaningful activity or a clearly maintained posting workflow.
+- Hosts technology jobs directly on GitHub, through Issues or a documented repository list.
+- Documents how employers or community members submit and maintain listings.
+- Applies its publishing rules consistently.
+- Serves a defined technology community, geography, or role category.
+- Improves the list's geographic, linguistic, community, or technology diversity.
 
-- Be a public GitHub repository.
-- Publish jobs directly through GitHub Issues, or maintain a GitHub-native job board/list with clear job links.
-- Belong to a developer community, language ecosystem, regional tech group, open-source project, or transparent job-tracking initiative.
-- Be useful to job seekers, with recent enough activity or a clear archive value.
-- Have a clear geographic or global scope.
-
-Entries that usually do not belong:
-
-- Closed-source job platforms with no GitHub-native job data.
-- Personal bookmarking lists without curation.
-- Company-only career pages unless they are intentionally run as an open GitHub job board.
-- Repositories with spam, unclear ownership, or mostly unrelated issues.
-
-## Entry Format
-
-Add new entries to `README.md` under the correct region and country.
-
-Use this format:
+Use this exact format:
 
 ```markdown
-- [owner/repository](https://github.com/owner/repository) - scope; locale.
+- [owner/repository](https://github.com/owner/repository) - Objective factual description.
 ```
 
-Accepted scopes:
+Place the entry under the correct continent and sort entries alphabetically by `owner/repository`, case-insensitively. In the pull request, link to evidence for activity, GitHub-hosted jobs, and contributor documentation. Keep the description conservative, start it with an uppercase letter, and end it with a period.
 
-- `global`
-- `national`
-- `regional`
-- `city`
+## Request Addition to the Complete Catalog
 
-Examples:
+Use the [source request form](https://github.com/openings-dev/web/issues/new?template=source_repository.yml) when a source belongs in the broader openings.dev catalog but is not yet a strong fit for the editorial list. Include the repository URL, geographic scope, language, and an explanation of how listings are published.
 
-```markdown
-- [frontendbr/vagas](https://github.com/frontendbr/vagas) - national; pt-BR.
-- [developersRJ/vagas](https://github.com/developersRJ/vagas) - city; pt-BR.
-```
-
-## Suggested Metadata
-
-When opening an issue or pull request, include:
-
-```yaml
-repository: owner/repository
-url: https://github.com/owner/repository
-country: Country
-countryCode: CC
-region: Region
-locale: en-US
-scope: national
-evidence: https://github.com/owner/repository/issues
-```
+Catalog inclusion does not guarantee inclusion in the README. The catalog records eligible sources broadly; the README is a smaller editorial selection.
 
 ## Pull Request Checklist
 
-Before opening a pull request:
-
-- Confirm the repository URL works.
-- Confirm the repository is public.
-- Confirm jobs are visible through Issues or clear GitHub-hosted job links.
-- Put the entry under the right region and country.
-- Keep entries sorted alphabetically by `owner/repository` inside each country.
-- Avoid duplicate entries.
-- Keep descriptions short and factual.
-
-## Source Catalog
-
-This list is aligned with the openings.dev source catalog. If a contribution should also be consumed by openings.dev, it may need a corresponding update in the data catalog repository.
+- Confirm the repository is public and the URL works.
+- Confirm it is not archived, deprecated, duplicated, or tied to an expired hiring season.
+- Verify the evidence against the criteria above.
+- Preserve the entry format and alphabetical ordering.
+- Run `npm run verify`.
 
 ## Conduct
 

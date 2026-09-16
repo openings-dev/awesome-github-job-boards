@@ -1,11 +1,16 @@
 {
-  "name": "@openings-dev/awesome-github-issues-job-boards",
+  "name": "@openings-dev/awesome-github-job-boards",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "generate": "node scripts/generate-catalog.mjs",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "lint:awesome": "awesome-lint",
+    "verify": "npm test && npm run lint:awesome"
+  },
+  "devDependencies": {
+    "awesome-lint": "2.3.0"
   },
   "engines": {
     "node": ">=20.9.0"
