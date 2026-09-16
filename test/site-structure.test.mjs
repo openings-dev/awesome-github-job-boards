@@ -27,8 +27,16 @@ test("catalog page exposes the data bootstrap and one primary heading", async ()
   assert.equal(page.match(/<h1\b/gu)?.length, 1);
   assert.match(page, /data-catalog-root/u);
   assert.match(page, /<script[^>]+type="application\/json"[^>]+id="catalog-data"[^>]+data-catalog-data/u);
-  assert.match(page, /\{\{\s*site\.data\.catalog\s*\|\s*jsonify\s*\}\}/u);
+  assert.match(page, /site\.data\.catalog\s*\|\s*jsonify\s*\|\s*replace:\s*['"]<\/['"],\s*['"]<\\\/['"]/u);
   assert.match(page, /https:\/\/openings\.dev/u);
+});
+
+test("escaped catalog JSON cannot terminate its script element and remains parseable", () => {
+  const payload = { repositories: [{ description: "</script><script>alert(1)</script>" }] };
+  const rendered = JSON.stringify(payload).replaceAll("</", "<\\/");
+
+  assert.doesNotMatch(rendered, /<\/script/iu);
+  assert.deepEqual(JSON.parse(rendered), payload);
 });
 
 test("filter controls have visible labels and match the catalog module hooks", async () => {
@@ -93,4 +101,18 @@ test("catalog stylesheet provides responsive layout and accessibility safeguards
   assert.match(css, /\[hidden\]\s*\{[^}]*display:\s*none\s*!important/su);
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/u);
   assert.doesNotMatch(css, /@import/u);
+});
+
+test("focus ring token has at least 3:1 contrast against white", async () => {
+  const css = await read("assets/css/catalog.css");
+  const token = css.match(/--focus-ring:\s*(#[0-9a-f]{6})/iu)?.[1];
+  assert.ok(token, "expected a six-digit --focus-ring color token");
+
+  const luminance = (hex) => {
+    const channels = hex.slice(1).match(/.{2}/gu).map((value) => Number.parseInt(value, 16) / 255);
+    const linear = channels.map((value) => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+  };
+  const contrast = (luminance("#ffffff") + 0.05) / (luminance(token) + 0.05);
+  assert.ok(contrast >= 3, `expected ${token} to have at least 3:1 contrast against white, got ${contrast}`);
 });

@@ -5,6 +5,7 @@ title: Catalog
 {% assign repositories = site.data.catalog.repositories %}
 {% assign countries = repositories | map: "country" | compact | uniq %}
 {% assign locales = repositories | map: "locale" | compact | uniq %}
+{% assign catalog_json = site.data.catalog | jsonify | replace: '</', '<\/' %}
 <div class="catalog" data-catalog-root>
   <section class="catalog-hero" aria-labelledby="catalog-title">
     <div class="site-shell catalog-hero__inner">
@@ -27,4 +28,4 @@ title: Catalog
     {% include catalog-results.html %}
   </section>
 </div>
-<script type="application/json" id="catalog-data" data-catalog-data>{{ site.data.catalog | jsonify }}</script>
+<script type="application/json" id="catalog-data" data-catalog-data>{{ catalog_json }}</script>
