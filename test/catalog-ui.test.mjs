@@ -164,7 +164,7 @@ function fakeCatalogDom() {
       .map((key) => [key, new FakeElement(ownerDocument)]),
   );
   const elements = Object.fromEntries(
-    ["results", "count", "empty", "error", "clear"]
+    ["results", "summary", "count", "empty", "error", "clear"]
       .map((key) => [key, new FakeElement(ownerDocument)]),
   );
   elements.template = {
@@ -177,7 +177,7 @@ function fakeCatalogDom() {
         if (selector.includes(`catalog-filter=\"${key}\"`)) return controls[key];
       }
       if (selector.includes("catalog-card-template")) return elements.template;
-      for (const key of ["results", "template", "count", "empty", "error", "clear"]) {
+      for (const key of ["results", "summary", "template", "count", "empty", "error", "clear"]) {
         if (selector.includes(`catalog-${key}`)) return elements[key];
       }
       return null;
@@ -208,6 +208,7 @@ test("initializes and drives the catalog DOM without treating data as HTML", () 
     assert.equal(controls.country.value, "Brazil");
     assert.equal(elements.count.textContent, "1");
     assert.equal(elements.count.attributes["aria-live"], "polite");
+    assert.equal(elements.summary.hidden, false);
     assert.equal(elements.results.children.length, 1);
     assert.equal(elements.results.children.some(({ serverRenderedFallback }) => serverRenderedFallback), false);
     assert.equal(elements.results.children[0].fields[0].textContent, hostile.repository);
@@ -248,4 +249,8 @@ test("shows an error state for an invalid catalog", () => {
   assert.equal(elements.empty.hidden, true);
   assert.equal(elements.results.hidden, true);
   assert.equal(elements.count.textContent, "0");
+  assert.equal(elements.summary.hidden, true);
+
+  initCatalog(root, items);
+  assert.equal(elements.summary.hidden, false);
 });

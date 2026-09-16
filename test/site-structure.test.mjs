@@ -58,6 +58,7 @@ test("filter controls have visible labels and match the catalog module hooks", a
 test("results include live count, semantic card template, and initial states", async () => {
   const results = await read("_includes/catalog-results.html");
 
+  assert.match(results, /data-catalog-summary/u);
   assert.match(results, /id="catalog-count"[^>]+data-catalog-count[^>]+aria-live="polite"/u);
   assert.match(results, /data-catalog-results/u);
   assert.match(results, /<template[^>]+id="catalog-card-template"[^>]+data-catalog-card-template/u);

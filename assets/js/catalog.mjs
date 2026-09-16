@@ -11,6 +11,7 @@ const HOOKS = Object.freeze({
   ]))),
   results: "[data-catalog-results], #catalog-results",
   template: "template[data-catalog-card-template], #catalog-card-template",
+  summary: "[data-catalog-summary], #catalog-summary",
   count: "[data-catalog-count], #catalog-count",
   empty: "[data-catalog-empty], #catalog-empty",
   error: "[data-catalog-error], #catalog-error",
@@ -107,6 +108,7 @@ export function initCatalog(root, catalog) {
   const elements = {
     results: root.querySelector(HOOKS.results),
     template: root.querySelector(HOOKS.template),
+    summary: root.querySelector(HOOKS.summary),
     count: root.querySelector(HOOKS.count),
     empty: root.querySelector(HOOKS.empty),
     error: root.querySelector(HOOKS.error),
@@ -115,11 +117,13 @@ export function initCatalog(root, catalog) {
   const repositories = Array.isArray(catalog) ? catalog : catalog?.repositories;
   if (!Array.isArray(repositories)) {
     if (elements.count) elements.count.textContent = "0";
+    setVisible(elements.summary, false);
     setVisible(elements.error, true);
     setVisible(elements.empty, false);
     setVisible(elements.results, false);
     return null;
   }
+  setVisible(elements.summary, true);
   setVisible(elements.error, false);
   elements.count?.setAttribute?.("aria-live", "polite");
 
