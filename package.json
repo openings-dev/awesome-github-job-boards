@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "generate": "node scripts/generate-readme.mjs",
+    "generate": "node scripts/generate-catalog.mjs",
     "test": "node --test test/*.test.mjs"
   },
   "engines": {

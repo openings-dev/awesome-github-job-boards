@@ -18,17 +18,28 @@ function text(value, name) {
   return value.trim();
 }
 
-function markdown(value) {
-  return value.replaceAll("\\", "\\\\").replaceAll("[", "\\[").replaceAll("]", "\\]");
+function githubUrl(value) {
+  const rawUrl = text(value, "repository URL");
+  let url;
+  try {
+    url = new URL(rawUrl);
+  } catch {
+    throw new Error(`Invalid GitHub URL: ${rawUrl}`);
+  }
+  if (url.protocol !== "https:" || url.host !== "github.com" || url.username || url.password) {
+    throw new Error(`Invalid GitHub URL: ${url}`);
+  }
+  return url.toString();
 }
 
-function sentenceCase(value) {
-  return `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
+function optionalDescription(value) {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== "string") throw new Error("Invalid description");
+  return value.trim() || undefined;
 }
 
 function regionRank(region) {
-  const rank = REGION_ORDER.indexOf(region);
-  return rank === -1 ? REGION_ORDER.length : rank;
+  return REGION_ORDER.indexOf(region);
 }
 
 function compareCountries(left, right) {
@@ -40,7 +51,10 @@ function compareCountries(left, right) {
 export function parseCatalog(value) {
   const source = record(value, "catalog");
   const generatedAt = text(source.generatedAt, "catalog date");
-  if (!/^\d{4}-\d{2}-\d{2}$/u.test(generatedAt) || Number.isNaN(Date.parse(`${generatedAt}T00:00:00Z`))) {
+  const parsedDate = new Date(`${generatedAt}T00:00:00Z`);
+  if (!/^\d{4}-\d{2}-\d{2}$/u.test(generatedAt) ||
+      Number.isNaN(parsedDate.valueOf()) ||
+      parsedDate.toISOString().slice(0, 10) !== generatedAt) {
     throw new Error("Invalid catalog date");
   }
   if (!Array.isArray(source.repositories)) throw new Error("Invalid repositories");
@@ -51,16 +65,27 @@ export function parseCatalog(value) {
     const duplicateKey = repository.toLowerCase();
     if (seen.has(duplicateKey)) throw new Error(`Duplicate repository: ${repository}`);
     seen.add(duplicateKey);
-    const url = new URL(text(item.url, "repository URL"));
-    if (url.protocol !== "https:" || url.hostname !== "github.com") throw new Error(`Invalid GitHub URL: ${url}`);
-    return {
+    const repositoryParts = repository.split("/");
+    const fallbackOwner = repositoryParts.length === 2 ? repositoryParts[0] : undefined;
+    const fallbackName = repositoryParts.length === 2 ? repositoryParts[1] : undefined;
+    const region = text(item.region, "region");
+    if (!REGION_ORDER.includes(region)) throw new Error(`Invalid region: ${region}`);
+    const scope = text(item.scope, "scope");
+    if (!["global", "national", "regional", "city"].includes(scope)) throw new Error(`Invalid scope: ${scope}`);
+    const description = optionalDescription(item.description);
+    const normalized = {
       repository,
-      url: url.toString(),
+      owner: text(item.owner ?? fallbackOwner, "repository owner"),
+      name: text(item.name ?? fallbackName, "repository name"),
+      url: githubUrl(item.url),
+      ...(description ? { description: text(description, "description") } : {}),
       country: text(item.country, "country"),
-      region: text(item.region, "region"),
+      countryCode: text(item.countryCode, "country code"),
+      region,
       locale: text(item.locale, "locale"),
-      scope: text(item.scope, "scope"),
+      scope,
     };
+    return normalized;
   });
   repositories.sort((left, right) =>
     regionRank(left.region) - regionRank(right.region) ||
@@ -70,34 +95,6 @@ export function parseCatalog(value) {
   return { generatedAt, repositories };
 }
 
-export function renderCatalog(catalog) {
-  const lines = [];
-  let currentRegion = "";
-  let currentCountry = "";
-  for (const item of catalog.repositories) {
-    if (item.region !== currentRegion) {
-      currentRegion = item.region;
-      currentCountry = "";
-      if (lines.length) lines.push("");
-      lines.push(`### ${markdown(item.region)}`, "");
-    }
-    if (item.country !== currentCountry) {
-      currentCountry = item.country;
-      if (lines.at(-1) !== "") lines.push("");
-      lines.push(`#### ${markdown(item.country)}`, "");
-    }
-    lines.push(`- [${markdown(item.repository)}](${item.url}) - ${markdown(sentenceCase(item.scope))} · ${markdown(item.locale)}.`);
-  }
-  return `${lines.join("\n").trim()}\n`;
-}
-
-export function renderReadme(template, catalog) {
-  for (const placeholder of ["{{TOTAL}}", "{{GENERATED_AT}}", "{{CATALOG}}"] ) {
-    if (!template.includes(placeholder)) throw new Error(`Missing template placeholder ${placeholder}`);
-  }
-  return template
-    .replaceAll("{{TOTAL}}", String(catalog.repositories.length))
-    .replaceAll("{{GENERATED_AT}}", catalog.generatedAt)
-    .replace("{{CATALOG}}", renderCatalog(catalog))
-    .replace(/\s+$/u, "\n");
+export function serializeCatalog(catalog) {
+  return `${JSON.stringify(catalog, null, 2)}\n`;
 }
