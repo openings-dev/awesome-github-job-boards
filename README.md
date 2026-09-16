@@ -1,6 +1,6 @@
 # Awesome GitHub Job Boards [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
 
-Community-driven technology job boards hosted on GitHub.
+> Community-driven technology job boards hosted on GitHub.
 
 This is an editorial selection of useful, documented boards maintained by technology communities. A listing does not imply that every linked board has an open role today.
 

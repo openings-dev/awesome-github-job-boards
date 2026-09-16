@@ -3,12 +3,13 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 const readme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
+const license = await readFile(new URL('../LICENSE', import.meta.url), 'utf8');
 const entryPattern = /^- \[([^\]]+\/[^\]]+)\]\(https:\/\/github\.com\/[^)]+\) - (.+)$/gm;
 const entries = [...readme.matchAll(entryPattern)];
 
 test('uses the approved title, badge, and objective description', () => {
   assert.match(readme, /^# Awesome GitHub Job Boards \[!\[Awesome\]\(https:\/\/awesome\.re\/badge\.svg\)\]\(https:\/\/awesome\.re\)$/m);
-  assert.match(readme, /^Community-driven technology job boards hosted on GitHub\.$/m);
+  assert.match(readme, /^> Community-driven technology job boards hosted on GitHub\.$/m);
 });
 
 test('places Contents first and keeps contribution material outside it', () => {
@@ -48,4 +49,15 @@ test('excludes known archived, deprecated, and expired repositories', () => {
 test('links to the complete catalog and openings.dev', () => {
   assert.match(readme, /\[complete source catalog\]\(https:\/\/github\.com\/openings-dev\/data-pipeline\)/i);
   assert.match(readme, /\[openings\.dev\]\(https:\/\/openings\.dev\)/);
+});
+
+test('uses the complete CC0 1.0 Universal legal code without a README license section', () => {
+  assert.match(license, /^Creative Commons Legal Code\n\nCC0 1\.0 Universal\n/);
+  assert.match(license, /Statement of Purpose/);
+  assert.match(license, /1\. Copyright and Related Rights\./);
+  assert.match(license, /2\. Waiver\./);
+  assert.match(license, /3\. Public License Fallback\./);
+  assert.match(license, /4\. Limitations and Disclaimers\./);
+  assert.doesNotMatch(license, /MIT License/);
+  assert.doesNotMatch(readme, /^## License$/m);
 });
