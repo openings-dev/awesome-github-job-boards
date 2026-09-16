@@ -10,7 +10,8 @@
     "verify": "npm test && npm run lint:awesome"
   },
   "devDependencies": {
-    "awesome-lint": "2.3.0"
+    "awesome-lint": "2.3.0",
+    "yaml": "2.9.1"
   },
   "engines": {
     "node": ">=20.9.0"

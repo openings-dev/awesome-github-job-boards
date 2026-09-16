@@ -11,6 +11,7 @@
 
 - [ ] I described the change and tested it where applicable.
 - [ ] I understand the README is a manually curated Awesome GitHub Job Boards list, while the website contains the complete source catalog.
+- [ ] If I am proposing a source only for the complete catalog, I used the [openings.dev source request form](https://github.com/openings-dev/web/issues/new?template=source_repository.yml) instead.
 
 ### Curated README nominations only
 
