@@ -120,6 +120,7 @@ export function initCatalog(root, catalog) {
     return null;
   }
   setVisible(elements.error, false);
+  elements.count?.setAttribute?.("aria-live", "polite");
 
   const options = getFilterOptions(repositories);
   for (const key of FILTER_KEYS) {

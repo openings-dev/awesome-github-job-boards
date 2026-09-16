@@ -119,3 +119,129 @@ test("initialization is defensive without a browser DOM", () => {
   assert.equal(initCatalog({}, items), null);
   assert.doesNotThrow(() => initCatalog(null, null));
 });
+
+class FakeElement {
+  constructor(ownerDocument, { dataset = {}, value = "" } = {}) {
+    this.ownerDocument = ownerDocument;
+    this.dataset = dataset;
+    this.value = value;
+    this.textContent = "";
+    this.hidden = false;
+    this.children = [];
+    this.listeners = {};
+    this.attributes = {};
+  }
+
+  append(child) { this.children.push(child); }
+  replaceChildren() { this.children = []; }
+  addEventListener(type, listener) { this.listeners[type] = listener; }
+  dispatch(type) { this.listeners[type]?.({ type, preventDefault() {} }); }
+  setAttribute(name, value) { this.attributes[name] = value; }
+  focus() { this.focused = true; }
+}
+
+class FakeFragment {
+  constructor(ownerDocument) {
+    this.fields = [
+      new FakeElement(ownerDocument, { dataset: { catalogField: "repository" } }),
+      new FakeElement(ownerDocument, { dataset: { catalogField: "description" } }),
+    ];
+    this.link = new FakeElement(ownerDocument, { dataset: { catalogLink: "" } });
+    this.link.href = "";
+  }
+
+  querySelectorAll(selector) {
+    if (selector === "[data-catalog-field]") return this.fields;
+    if (selector === "[data-catalog-link]") return [this.link];
+    return [];
+  }
+}
+
+function fakeCatalogDom() {
+  const ownerDocument = { createElement: () => new FakeElement(ownerDocument) };
+  const controls = Object.fromEntries(
+    ["query", "region", "country", "locale", "scope"]
+      .map((key) => [key, new FakeElement(ownerDocument)]),
+  );
+  const elements = Object.fromEntries(
+    ["results", "count", "empty", "error", "clear"]
+      .map((key) => [key, new FakeElement(ownerDocument)]),
+  );
+  elements.template = {
+    content: { cloneNode: () => new FakeFragment(ownerDocument) },
+  };
+  const root = {
+    querySelector(selector) {
+      if (selector.includes("catalog-search")) return controls.query;
+      for (const key of ["region", "country", "locale", "scope"]) {
+        if (selector.includes(`catalog-filter=\"${key}\"`)) return controls[key];
+      }
+      if (selector.includes("catalog-card-template")) return elements.template;
+      for (const key of ["results", "template", "count", "empty", "error", "clear"]) {
+        if (selector.includes(`catalog-${key}`)) return elements[key];
+      }
+      return null;
+    },
+  };
+  return { controls, elements, root };
+}
+
+test("initializes and drives the catalog DOM without treating data as HTML", () => {
+  const { controls, elements, root } = fakeCatalogDom();
+  const hostile = {
+    ...items[0],
+    repository: "<img src=x onerror=alert(1)>",
+    description: "<strong>not markup</strong>",
+    url: "https://github.com/acme/jobs",
+  };
+  const calls = [];
+  const oldLocation = globalThis.location;
+  const oldHistory = globalThis.history;
+  globalThis.location = { search: "?country=Brazil", pathname: "/boards", hash: "#catalog" };
+  globalThis.history = { replaceState: (...args) => calls.push(args) };
+
+  try {
+    const controller = initCatalog(root, [hostile, items[1], items[2]]);
+    assert.equal(typeof controller.render, "function");
+    assert.deepEqual(controls.country.children.map(({ value }) => value), ["Brazil", "Canada", "Global"]);
+    assert.equal(controls.country.value, "Brazil");
+    assert.equal(elements.count.textContent, "1");
+    assert.equal(elements.count.attributes["aria-live"], "polite");
+    assert.equal(elements.results.children.length, 1);
+    assert.equal(elements.results.children[0].fields[0].textContent, hostile.repository);
+    assert.equal(elements.results.children[0].fields[1].textContent, hostile.description);
+    assert.equal(elements.results.children[0].link.href, hostile.url);
+    assert.equal("innerHTML" in elements.results.children[0].fields[0], false);
+
+    controls.query.value = "canada";
+    controls.query.dispatch("input");
+    assert.equal(elements.count.textContent, "0");
+    assert.equal(elements.empty.hidden, false);
+    assert.equal(calls.at(-1)[2], "/boards?query=canada&country=Brazil#catalog");
+
+    controls.country.value = "Canada";
+    controls.country.dispatch("change");
+    assert.equal(elements.count.textContent, "1");
+    assert.equal(elements.empty.hidden, true);
+    assert.equal(calls.at(-1)[2], "/boards?query=canada&country=Canada#catalog");
+
+    elements.clear.dispatch("click");
+    assert.deepEqual(Object.values(controls).map(({ value }) => value), ["", "", "", "", ""]);
+    assert.equal(elements.count.textContent, "3");
+    assert.equal(calls.at(-1)[2], "/boards#catalog");
+    assert.equal(controls.query.focused, true);
+  } finally {
+    if (oldLocation === undefined) delete globalThis.location;
+    else globalThis.location = oldLocation;
+    if (oldHistory === undefined) delete globalThis.history;
+    else globalThis.history = oldHistory;
+  }
+});
+
+test("shows an error state for an invalid catalog", () => {
+  const { elements, root } = fakeCatalogDom();
+  assert.equal(initCatalog(root, { repositories: null }), null);
+  assert.equal(elements.error.hidden, false);
+  assert.equal(elements.empty.hidden, true);
+  assert.equal(elements.results.hidden, true);
+});
