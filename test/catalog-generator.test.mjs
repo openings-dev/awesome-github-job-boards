@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { parseCatalog, serializeCatalog } from "../src/catalog-generator.mjs";
-import catalogData from "../_data/catalog.json" with { type: "json" };
+
+const catalogData = JSON.parse(await readFile(new URL("../_data/catalog.json", import.meta.url), "utf8"));
 
 const repository = {
   repository: " beta/jobs ",
