@@ -113,7 +113,7 @@ test("site configuration uses the canonical project metadata without a theme", a
   assert.match(config, /plugins:\s*\n\s*- jekyll-seo-tag/u);
   assert.match(config, /markdown:\s*["']?kramdown["']?/u);
   assert.match(config, /input:\s*GFM/u);
-  for (const path of ["node_modules", "test", "scripts", "src", "docs", "Gemfile", "Gemfile.lock"]) {
+  for (const path of ["node_modules", "vendor", "test", "scripts", "src", "docs", "Gemfile", "Gemfile.lock"]) {
     assert.match(config, new RegExp(`\\s- ${path.replace(".", "\\.")}(?:\\s|$)`, "u"));
   }
   assert.doesNotMatch(config, /(?:^|\s)theme:/u);
