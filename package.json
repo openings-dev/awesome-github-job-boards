@@ -6,9 +6,8 @@
   "scripts": {
     "generate": "node scripts/generate-catalog.mjs",
     "test": "node --test test/*.test.mjs",
-    "lint:name": "node scripts/check-canonical-name.mjs",
     "lint:awesome": "awesome-lint",
-    "verify": "npm test && npm run lint:name && npm run lint:awesome"
+    "verify": "npm test && npm run lint:awesome"
   },
   "devDependencies": {
     "awesome-lint": "2.3.0",

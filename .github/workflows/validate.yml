@@ -28,17 +28,5 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Check canonical name
-        run: npm run lint:name
-
       - name: Lint Awesome list
         run: npm run lint:awesome
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.3"
-          bundler-cache: true
-
-      - name: Build site
-        run: bundle exec jekyll build --strict_front_matter

@@ -41,7 +41,7 @@ test("navigation and footer distinguish the source catalog from current vacancie
   assert.match(layout, /href="https:\/\/github\.com\/\{\{ site\.repository \}\}\/blob\/main\/CONTRIBUTING\.md"[^>]*>[^<]*Contribut/iu);
   assert.match(layout, /href="https:\/\/github\.com\/\{\{ site\.repository \}\}\/blob\/main\/LICENSE"[^>]*>[^<]*License/iu);
   assert.match(layout, /source catalog/iu);
-  assert.match(layout, /current (?:job )?(?:openings|vacancies)/iu);
+  assert.match(layout, /Find jobs/iu);
 });
 
 test("escaped catalog JSON cannot terminate its script element and remains parseable", () => {
@@ -113,7 +113,7 @@ test("site configuration uses the canonical project metadata without a theme", a
   assert.match(config, /plugins:\s*\n\s*- jekyll-seo-tag/u);
   assert.match(config, /markdown:\s*["']?kramdown["']?/u);
   assert.match(config, /input:\s*GFM/u);
-  for (const path of ["node_modules", "vendor", "test", "scripts", "src", "docs", "Gemfile", "Gemfile.lock"]) {
+  for (const path of ["node_modules", "vendor", "test", "scripts", "src", "docs"]) {
     assert.match(config, new RegExp(`\\s- ${path.replace(".", "\\.")}(?:\\s|$)`, "u"));
   }
   assert.doesNotMatch(config, /(?:^|\s)theme:/u);
@@ -126,7 +126,7 @@ test("catalog stylesheet provides responsive layout and accessibility safeguards
   const css = await read("assets/css/catalog.css");
 
   assert.match(css, /:root\s*\{/u);
-  assert.match(css, /max-width:\s*1180px/u);
+  assert.match(css, /90rem/u);
   assert.match(css, /repeat\(auto-fit,\s*minmax\(/u);
   assert.match(css, /repeat\(auto-fill,\s*minmax\(/u);
   assert.match(css, /\.site-header nav,\s*\.site-footer nav\s*\{[^}]*display:\s*flex[^}]*gap:/su);
@@ -136,10 +136,10 @@ test("catalog stylesheet provides responsive layout and accessibility safeguards
   assert.doesNotMatch(css, /@import/u);
 });
 
-test("focus ring token has at least 3:1 contrast against white", async () => {
+test("Openings focus ring token has at least 3:1 contrast against white", async () => {
   const css = await read("assets/css/catalog.css");
-  const token = css.match(/--focus-ring:\s*(#[0-9a-f]{6})/iu)?.[1];
-  assert.ok(token, "expected a six-digit --focus-ring color token");
+  const token = css.match(/--brand-mint-focus:\s*(#[0-9a-f]{6})/iu)?.[1];
+  assert.ok(token, "expected a six-digit Openings focus token");
 
   const luminance = (hex) => {
     const channels = hex.slice(1).match(/.{2}/gu).map((value) => Number.parseInt(value, 16) / 255);

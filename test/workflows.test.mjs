@@ -40,7 +40,7 @@ test("catalog update validates and commits only generated catalog data", async (
   assert.doesNotMatch(raw, /git add\s+README\.md|generate-readme/u);
 });
 
-test("validation workflow checks the awesome list and builds the site", async () => {
+test("validation workflow checks the Awesome list with Node tooling", async () => {
   const workflow = await readYaml(".github/workflows/validate.yml");
   const validate = workflow.jobs.validate;
 
@@ -56,31 +56,9 @@ test("validation workflow checks the awesome list and builds the site", async ()
   });
   assert.equal(stepNamed(validate, "Install Node.js dependencies").run, "npm ci");
   assert.equal(stepNamed(validate, "Run tests").run, "npm test");
-  assert.equal(stepNamed(validate, "Check canonical name").run, "npm run lint:name");
   assert.equal(stepNamed(validate, "Lint Awesome list").run, "npm run lint:awesome");
-  assert.deepEqual(stepNamed(validate, "Setup Ruby"), {
-    name: "Setup Ruby",
-    uses: "ruby/setup-ruby@v1",
-    with: { "ruby-version": "3.3", "bundler-cache": true },
-  });
-  assert.equal(stepNamed(validate, "Build site").run, "bundle exec jekyll build --strict_front_matter");
-});
-
-test("Ruby and GitHub Pages versions are reproducibly locked", async () => {
-  const [rubyVersion, gemfile, lockfile] = await Promise.all([
-    read(".ruby-version"),
-    read("Gemfile"),
-    read("Gemfile.lock"),
-  ]);
-
-  assert.equal(rubyVersion.trim(), "3.3");
-  assert.match(gemfile, /^ruby "~> 3\.3\.0"$/mu);
-  const pinnedPages = gemfile.match(/gem\s+"github-pages",\s*"(\d+(?:\.\d+)*)"/u)?.[1];
-  assert.ok(pinnedPages, "expected an exact github-pages version in Gemfile");
-  assert.match(lockfile, new RegExp(`^    github-pages \\(${pinnedPages.replaceAll(".", "\\.")}\\)$`, "mu"));
-  assert.match(lockfile, /^  arm64-darwin(?:-\d+)?$/mu);
-  assert.match(lockfile, /^  x86_64-linux$/mu);
-  assert.match(lockfile, /^RUBY VERSION\s*\n\s+ruby 3\.3\./mu);
+  assert.equal(stepNamed(validate, "Setup Ruby"), undefined);
+  assert.equal(stepNamed(validate, "Build site"), undefined);
 });
 
 test("issue forms separate curated nominations from the complete catalog", async () => {

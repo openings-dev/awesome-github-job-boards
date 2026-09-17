@@ -15,5 +15,3 @@ exclude:
   - scripts
   - src
   - docs
-  - Gemfile
-  - Gemfile.lock
