@@ -17,7 +17,7 @@ body:
       value: |
         This form is for editorial nominations to the curated README. Inclusion is not guaranteed.
 
-        To add an eligible source to the complete openings.dev catalog, use the [source request form](https://github.com/openings-dev/web/issues/new?template=source_repository.yml) instead.
+        To browse the complete catalog or request an eligible source, use the [openings.dev community directory](https://openings.dev/communities/) instead.
   - type: input
     id: url
     attributes:

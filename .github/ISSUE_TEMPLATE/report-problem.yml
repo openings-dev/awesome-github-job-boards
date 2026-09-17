@@ -1,5 +1,5 @@
 name: Report a problem
-description: Report a problem in the curated Awesome GitHub Job Boards README or complete website catalog.
+description: Report a problem in the curated Awesome GitHub Job Boards README.
 title: "Problem: owner/repository"
 labels:
   - correction
@@ -9,16 +9,6 @@ body:
     attributes:
       label: Repository or entry
       placeholder: frontendbr/vagas
-    validations:
-      required: true
-  - type: dropdown
-    id: surface
-    attributes:
-      label: Where is the problem?
-      options:
-        - Curated README
-        - Complete website catalog
-        - Both
     validations:
       required: true
   - type: dropdown
@@ -40,6 +30,6 @@ body:
     id: details
     attributes:
       label: Details
-      description: Explain what should be fixed and include supporting links. Catalog source changes may be redirected to the openings.dev source request workflow.
+      description: Explain what should be fixed and include supporting links.
     validations:
       required: true

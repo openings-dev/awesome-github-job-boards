@@ -67,5 +67,5 @@ Read [Contributing](CONTRIBUTING.md) before proposing an addition to this editor
 
 ## Footnotes
 
-- Browse the [complete source catalog](https://github.com/openings-dev/data-pipeline) for the broader set of discovered sources.
+- Browse the [complete community directory](https://openings.dev/communities/) for the broader set of sources.
 - Search current listings on [openings.dev](https://openings.dev).

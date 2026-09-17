@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Request a source for the complete catalog
-    url: https://github.com/openings-dev/web/issues/new?template=source_repository.yml
-    about: Submit an eligible source to the complete openings.dev catalog. This does not nominate it for the curated README.
+  - name: Complete community directory
+    url: https://openings.dev/communities/
+    about: Browse the complete openings.dev catalog and its source request guidance.
   - name: Awesome GitHub Job Boards
     url: https://github.com/openings-dev/awesome-github-job-boards
-    about: Browse the canonical curated Awesome list and its complete catalog site.
+    about: Browse the canonical curated Awesome list.
   - name: openings.dev
     url: https://openings.dev
     about: Search current technology opportunities collected from GitHub sources.

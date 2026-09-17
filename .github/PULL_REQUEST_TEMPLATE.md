@@ -5,13 +5,13 @@
 ## Contribution type
 
 - [ ] Curated README nomination
-- [ ] Catalog site, code, documentation, or maintenance
+- [ ] Repository documentation or maintenance
 
 ## Checklist
 
 - [ ] I described the change and tested it where applicable.
-- [ ] I understand the README is a manually curated Awesome GitHub Job Boards list, while the website contains the complete source catalog.
-- [ ] If I am proposing a source only for the complete catalog, I used the [openings.dev source request form](https://github.com/openings-dev/web/issues/new?template=source_repository.yml) instead.
+- [ ] I understand the README is a manually curated Awesome GitHub Job Boards list, while the [openings.dev community directory](https://openings.dev/communities/) contains the complete catalog.
+- [ ] If I am proposing a source only for the complete catalog, I followed the guidance in the community directory instead.
 
 ### Curated README nominations only
 

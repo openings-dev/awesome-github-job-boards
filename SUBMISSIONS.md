@@ -11,7 +11,7 @@ Before submitting, verify that the repository:
 - Is not archived, deprecated, duplicated, or a mirror of an existing source.
 - Is not limited to an expired hiring season.
 
-Submit it through the [openings.dev source request form](https://github.com/openings-dev/web/issues/new?template=source_repository.yml). Include the repository URL, geographic scope, language, and a short explanation of how jobs are published or maintained.
+Start from the [openings.dev community directory](https://openings.dev/communities/) and use its source request link. Include the repository URL, geographic scope, language, and a short explanation of how jobs are published or maintained.
 
 The complete catalog and this README have different thresholds. Catalog inclusion records an eligible source but does not guarantee inclusion in the editorial README. README nominations require a pull request and evidence of recent activity, GitHub-hosted jobs, documentation, consistency, relevance, and contribution to the selection's diversity.
 

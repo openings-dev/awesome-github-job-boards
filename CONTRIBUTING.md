@@ -23,7 +23,7 @@ Place the entry under the correct continent and sort entries alphabetically by `
 
 ## Request Addition to the Complete Catalog
 
-Use the [source request form](https://github.com/openings-dev/web/issues/new?template=source_repository.yml) when a source belongs in the broader openings.dev catalog but is not yet a strong fit for the editorial list. Include the repository URL, geographic scope, language, and an explanation of how listings are published.
+Browse the [openings.dev community directory](https://openings.dev/communities/) when a source belongs in the broader catalog but is not yet a strong fit for this editorial list. To propose a missing source, use the source request link available there and include the repository URL, geographic scope, language, and an explanation of how listings are published.
 
 Catalog inclusion does not guarantee inclusion in the README. The catalog records eligible sources broadly; the README is a smaller editorial selection.
 

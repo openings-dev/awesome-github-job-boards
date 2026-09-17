@@ -82,8 +82,8 @@ test('excludes known archived, deprecated, and expired repositories', () => {
   for (const repository of excluded) assert.doesNotMatch(readme, new RegExp(repository));
 });
 
-test('links to the complete catalog and openings.dev', () => {
-  assert.match(readme, /\[complete source catalog\]\(https:\/\/github\.com\/openings-dev\/data-pipeline\)/i);
+test('links to the complete community directory and openings.dev', () => {
+  assert.match(readme, /\[complete community directory\]\(https:\/\/openings\.dev\/communities\/\)/i);
   assert.match(readme, /\[openings\.dev\]\(https:\/\/openings\.dev\)/);
 });
 
