@@ -14,14 +14,22 @@
           <span class="site-brand__mark" aria-hidden="true">GH</span>
           <span>Awesome GitHub Job Boards</span>
         </a>
-        <nav aria-label="Primary navigation"><a href="https://github.com/{{ site.repository }}">Contribute on GitHub</a></nav>
+        <nav aria-label="Primary navigation">
+          <a href="https://github.com/{{ site.repository }}#readme">Curated README</a>
+          <a href="https://openings.dev">Current jobs on openings.dev</a>
+          <a href="https://github.com/{{ site.repository }}/blob/main/CONTRIBUTING.md">Contribute a source</a>
+        </nav>
       </div>
     </header>
     <main id="main-content">{{ content }}</main>
     <footer class="site-footer">
       <div class="site-shell site-footer__inner">
-        <p>Maintained by the community for people who prefer open, inspectable job sources.</p>
-        <a href="https://github.com/{{ site.repository }}">View the repository</a>
+        <p>This source catalog documents community job-board repositories; for current job openings, search <a href="https://openings.dev">openings.dev</a>.</p>
+        <nav aria-label="Footer navigation">
+          <a href="https://github.com/{{ site.repository }}#readme">Catalog and methodology</a>
+          <a href="https://github.com/{{ site.repository }}/blob/main/CONTRIBUTING.md">Contribute a source</a>
+          <a href="https://github.com/{{ site.repository }}/blob/main/LICENSE">License</a>
+        </nav>
       </div>
     </footer>
     <script type="module" src="{{ '/assets/js/catalog.mjs' | relative_url }}"></script>

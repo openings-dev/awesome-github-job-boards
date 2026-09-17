@@ -35,6 +35,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .site-header__inner, .site-footer__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding-block: var(--space-4); }
 .site-brand { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--color-ink); font-weight: 750; text-decoration: none; }
 .site-brand__mark { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border-radius: var(--radius-sm); background: var(--color-ink); color: #fff; font-size: 0.72rem; letter-spacing: 0.08em; }
+.site-header nav, .site-footer nav { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .site-header nav a { font-weight: 650; }
 
 .catalog-hero { border-bottom: 1px solid var(--color-border); background: var(--color-subtle); }
@@ -83,6 +84,8 @@ h1 { max-width: 17ch; margin: 0; font-size: clamp(2.25rem, 6vw, 4.75rem); line-h
 .catalog-state { padding: var(--space-6) var(--space-4); border: 1px dashed var(--color-border); border-radius: var(--radius-lg); text-align: center; }
 .catalog-state h3 { margin: 0; }
 .catalog-state p { margin: var(--space-1) 0 0; color: var(--color-muted); }
+.catalog-state button { padding: 0; border: 0; background: transparent; color: var(--color-accent); cursor: pointer; font: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+.catalog-state button:hover { color: var(--color-accent-strong); }
 .catalog-state--error { border-color: #a32626; }
 .site-footer { margin-top: var(--space-6); border-top: 1px solid var(--color-border); background: var(--color-subtle); color: var(--color-muted); }
 .site-footer p { margin: 0; }

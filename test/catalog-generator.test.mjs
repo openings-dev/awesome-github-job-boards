@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { parseCatalog, serializeCatalog } from "../src/catalog-generator.mjs";
+import catalogData from "../_data/catalog.json" with { type: "json" };
 
 const repository = {
   repository: " beta/jobs ",
@@ -98,7 +99,7 @@ test("orders repositories deterministically by region, country, and repository",
   ]);
 });
 
-test("uses a code-point tiebreaker for locale-equivalent repository names", () => {
+test("serializes repository ordering independently of input order", () => {
   const item = (repository) => ({
     repository,
     url: `https://github.com/${repository}`,
@@ -108,10 +109,10 @@ test("uses a code-point tiebreaker for locale-equivalent repository names", () =
     locale: "en",
     scope: "global",
   });
-  const accentedFirst = parseCatalog(catalog([item("é/jobs"), item("e/jobs")]));
-  const plainFirst = parseCatalog(catalog([item("e/jobs"), item("é/jobs")]));
+  const accentedFirst = parseCatalog(catalog([item("ab/jobs"), item("a-b/jobs")]));
+  const plainFirst = parseCatalog(catalog([item("a-b/jobs"), item("ab/jobs")]));
 
-  assert.deepEqual(accentedFirst.repositories.map(({ repository }) => repository), ["e/jobs", "é/jobs"]);
+  assert.deepEqual(accentedFirst.repositories.map(({ repository }) => repository), ["a-b/jobs", "ab/jobs"]);
   assert.equal(serializeCatalog(accentedFirst), serializeCatalog(plainFirst));
 });
 
@@ -130,6 +131,33 @@ test("rejects duplicate repositories case-insensitively", () => {
   );
 });
 
+test("accepts the complete checked-in catalog", () => {
+  assert.equal(parseCatalog(catalogData).repositories.length, catalogData.repositories.length);
+});
+
+for (const repositoryName of ["not/a/repo/path", "owner/", "/name", "owner/name?tab=readme", "owner/name#readme", "-owner/name", "owner-/name", "owner/.", "owner/..", "owner/name extra"]) {
+  test(`rejects malformed repository ${repositoryName}`, () => {
+    assert.throws(
+      () => parseCatalog(catalog([{ ...repository, repository: repositoryName }])),
+      /invalid repository/iu,
+    );
+  });
+}
+
+for (const mismatch of [{ owner: "other" }, { name: "other" }]) {
+  test(`rejects repository metadata mismatch ${JSON.stringify(mismatch)}`, () => {
+    assert.throws(
+      () => parseCatalog(catalog([{ ...repository, ...mismatch }])),
+      /does not match repository/iu,
+    );
+  });
+}
+
+test("normalizes case-insensitive GitHub URL matching to repository segments", () => {
+  const parsed = parseCatalog(catalog([{ ...repository, url: "https://github.com/BETA/JOBS/" }]));
+  assert.equal(parsed.repositories[0].url, "https://github.com/beta/jobs");
+});
+
 for (const date of ["not-a-date", "2026-02-30", "2026-2-02"]) {
   test(`rejects invalid catalog date ${date}`, () => {
     assert.throws(() => parseCatalog(catalog([repository], date)), /invalid catalog date/iu);
@@ -143,9 +171,37 @@ for (const url of [
   "https://github.com.evil.test/beta/jobs",
   "https://github.com:444/beta/jobs",
   "https://user:password@github.com/beta/jobs",
+  "https://github.com/beta/jobs/issues",
+  "https://github.com/beta/jobs?tab=readme",
+  "https://github.com/beta/jobs#readme",
+  "https://github.com/other/jobs",
 ]) {
   test(`rejects non-GitHub HTTPS URL ${url}`, () => {
     assert.throws(() => parseCatalog(catalog([{ ...repository, url }])), /invalid github url/iu);
+  });
+}
+
+for (const countryCode of ["br", "BRA", "B", "??", "US-"]) {
+  test(`rejects invalid country code ${countryCode}`, () => {
+    assert.throws(
+      () => parseCatalog(catalog([{ ...repository, countryCode }])),
+      /invalid country code/iu,
+    );
+  });
+}
+
+for (const locale of ["???", "EN", "pt-br", "e", "english", "zh-hant-tw", "en_US", "en-US-extra-part"]) {
+  test(`rejects invalid locale ${locale}`, () => {
+    assert.throws(
+      () => parseCatalog(catalog([{ ...repository, locale }])),
+      /invalid locale/iu,
+    );
+  });
+}
+
+for (const locale of ["en", "pt-BR", "zh-Hant-TW", "es-419", "sr-Latn"]) {
+  test(`accepts basic BCP47 locale ${locale}`, () => {
+    assert.equal(parseCatalog(catalog([{ ...repository, locale }])).repositories[0].locale, locale);
   });
 }
 

@@ -112,7 +112,7 @@ export function initCatalog(root, catalog) {
     count: root.querySelector(HOOKS.count),
     empty: root.querySelector(HOOKS.empty),
     error: root.querySelector(HOOKS.error),
-    clear: root.querySelector(HOOKS.clear),
+    clears: root.querySelectorAll?.(HOOKS.clear) ?? [root.querySelector(HOOKS.clear)].filter(Boolean),
   };
   const repositories = Array.isArray(catalog) ? catalog : catalog?.repositories;
   if (!Array.isArray(repositories)) {
@@ -163,11 +163,13 @@ export function initCatalog(root, catalog) {
 
   controls.query?.addEventListener?.("input", render);
   for (const key of FILTER_KEYS) controls[key]?.addEventListener?.("change", render);
-  elements.clear?.addEventListener?.("click", () => {
-    writeControlState(controls, EMPTY_STATE);
-    render();
-    controls.query?.focus?.();
-  });
+  for (const clear of elements.clears) {
+    clear?.addEventListener?.("click", () => {
+      writeControlState(controls, EMPTY_STATE);
+      render();
+      controls.query?.focus?.();
+    });
+  }
   render();
   return { render };
 }

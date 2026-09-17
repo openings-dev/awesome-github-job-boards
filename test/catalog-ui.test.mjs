@@ -182,6 +182,10 @@ function fakeCatalogDom() {
       }
       return null;
     },
+    querySelectorAll(selector) {
+      if (selector.includes("catalog-clear")) return elements.clears ?? [elements.clear];
+      return [];
+    },
   };
   return { controls, elements, root };
 }
@@ -232,6 +236,32 @@ test("initializes and drives the catalog DOM without treating data as HTML", () 
     assert.deepEqual(Object.values(controls).map(({ value }) => value), ["", "", "", "", ""]);
     assert.equal(elements.count.textContent, "3");
     assert.equal(calls.at(-1)[2], "/boards#catalog");
+    assert.equal(controls.query.focused, true);
+  } finally {
+    if (oldLocation === undefined) delete globalThis.location;
+    else globalThis.location = oldLocation;
+    if (oldHistory === undefined) delete globalThis.history;
+    else globalThis.history = oldHistory;
+  }
+});
+
+test("every clear-filter action resets controls, rerenders, and focuses search", () => {
+  const { controls, elements, root } = fakeCatalogDom();
+  elements.clears = [elements.clear, new FakeElement(elements.clear.ownerDocument)];
+  const oldLocation = globalThis.location;
+  const oldHistory = globalThis.history;
+  globalThis.location = { search: "", pathname: "/", hash: "" };
+  globalThis.history = { replaceState() {} };
+
+  try {
+    initCatalog(root, items);
+    controls.query.value = "missing";
+    controls.query.dispatch("input");
+    assert.equal(elements.empty.hidden, false);
+    elements.clears[1].dispatch("click");
+    assert.deepEqual(Object.values(controls).map(({ value }) => value), ["", "", "", "", ""]);
+    assert.equal(elements.empty.hidden, true);
+    assert.equal(elements.count.textContent, "3");
     assert.equal(controls.query.focused, true);
   } finally {
     if (oldLocation === undefined) delete globalThis.location;

@@ -18,8 +18,14 @@
       </article>
     {% endfor %}
   </div>
-  <div class="catalog-state" id="catalog-empty" data-catalog-empty hidden><h3>No sources match these filters</h3><p>Try a broader search or clear the filters to see the full directory.</p></div>
-  <div class="catalog-state catalog-state--error" id="catalog-error" data-catalog-error hidden role="alert"><h3>The catalog could not be loaded</h3><p>Refresh the page or browse the source repository directly on GitHub.</p></div>
+  <div class="catalog-state" id="catalog-empty" data-catalog-empty hidden>
+    <h3>No sources match these filters</h3>
+    <p>Try a broader search, <button type="button" data-catalog-clear>clear all filters</button>, or <a href="https://github.com/{{ site.repository }}/blob/main/CONTRIBUTING.md">suggest a missing source</a>.</p>
+  </div>
+  <div class="catalog-state catalog-state--error" id="catalog-error" data-catalog-error hidden role="alert">
+    <h3>The catalog could not be loaded</h3>
+    <p>Read the <a href="https://github.com/{{ site.repository }}#readme">curated README on GitHub</a> or search <a href="https://openings.dev">current jobs on openings.dev</a>.</p>
+  </div>
 </section>
 <template id="catalog-card-template" data-catalog-card-template>
   <article class="catalog-card">

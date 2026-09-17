@@ -18,7 +18,14 @@ function text(value, name) {
   return value.trim();
 }
 
-function githubUrl(value) {
+function repositoryName(value) {
+  const repository = text(value, "repository name");
+  const match = repository.match(/^([A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)\/([A-Za-z0-9._-]+)$/u);
+  if (!match || match[2] === "." || match[2] === "..") throw new Error(`Invalid repository: ${repository}`);
+  return { repository, owner: match[1], name: match[2] };
+}
+
+function githubUrl(value, repository) {
   const rawUrl = text(value, "repository URL");
   let url;
   try {
@@ -26,10 +33,11 @@ function githubUrl(value) {
   } catch {
     throw new Error(`Invalid GitHub URL: ${rawUrl}`);
   }
-  if (url.protocol !== "https:" || url.host !== "github.com" || url.username || url.password) {
+  if (url.protocol !== "https:" || url.hostname !== "github.com" || url.port || url.username || url.password ||
+      url.search || url.hash || ![`/${repository}`, `/${repository}/`].some((path) => path.toLowerCase() === url.pathname.toLowerCase())) {
     throw new Error(`Invalid GitHub URL: ${url}`);
   }
-  return url.toString();
+  return `https://github.com/${repository}`;
 }
 
 function optionalDescription(value) {
@@ -67,28 +75,37 @@ export function parseCatalog(value) {
   const seen = new Set();
   const repositories = source.repositories.map((value) => {
     const item = record(value, "repository");
-    const repository = text(item.repository, "repository name");
+    const { repository, owner, name } = repositoryName(item.repository);
     const duplicateKey = repository.toLowerCase();
     if (seen.has(duplicateKey)) throw new Error(`Duplicate repository: ${repository}`);
     seen.add(duplicateKey);
-    const repositoryParts = repository.split("/");
-    const fallbackOwner = repositoryParts.length === 2 ? repositoryParts[0] : undefined;
-    const fallbackName = repositoryParts.length === 2 ? repositoryParts[1] : undefined;
+    if (item.owner !== undefined && text(item.owner, "repository owner") !== owner) {
+      throw new Error(`Repository owner does not match repository: ${repository}`);
+    }
+    if (item.name !== undefined && text(item.name, "repository name") !== name) {
+      throw new Error(`Repository name does not match repository: ${repository}`);
+    }
     const region = text(item.region, "region");
     if (!REGION_ORDER.includes(region)) throw new Error(`Invalid region: ${region}`);
     const scope = text(item.scope, "scope");
     if (!["global", "national", "regional", "city"].includes(scope)) throw new Error(`Invalid scope: ${scope}`);
     const description = optionalDescription(item.description);
+    const countryCode = text(item.countryCode, "country code");
+    if (!/^(?:GLOBAL|[A-Z]{2})$/u.test(countryCode)) throw new Error(`Invalid country code: ${countryCode}`);
+    const locale = text(item.locale, "locale");
+    if (!/^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-(?:[A-Z]{2}|\d{3}))?$/u.test(locale)) {
+      throw new Error(`Invalid locale: ${locale}`);
+    }
     const normalized = {
       repository,
-      owner: text(item.owner ?? fallbackOwner, "repository owner"),
-      name: text(item.name ?? fallbackName, "repository name"),
-      url: githubUrl(item.url),
+      owner,
+      name,
+      url: githubUrl(item.url, repository),
       ...(description ? { description: text(description, "description") } : {}),
       country: text(item.country, "country"),
-      countryCode: text(item.countryCode, "country code"),
+      countryCode,
       region,
-      locale: text(item.locale, "locale"),
+      locale,
       scope,
     };
     return normalized;

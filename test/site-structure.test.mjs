@@ -29,6 +29,19 @@ test("catalog page exposes the data bootstrap and one primary heading", async ()
   assert.match(page, /<script[^>]+type="application\/json"[^>]+id="catalog-data"[^>]+data-catalog-data/u);
   assert.match(page, /site\.data\.catalog\s*\|\s*jsonify\s*\|\s*replace:\s*['"]<\/['"],\s*['"]<\\\/['"]/u);
   assert.match(page, /https:\/\/openings\.dev/u);
+  assert.match(page, /site\.data\.catalog\.generatedAt/u);
+  assert.match(page, /<dt>Last updated<\/dt>/u);
+});
+
+test("navigation and footer distinguish the source catalog from current vacancies", async () => {
+  const layout = await read("_layouts/catalog.html");
+
+  assert.match(layout, /href="https:\/\/github\.com\/\{\{ site\.repository \}\}#readme"[^>]*>[^<]*README/iu);
+  assert.match(layout, /href="https:\/\/openings\.dev"[^>]*>[^<]*(?:current jobs|openings\.dev)/iu);
+  assert.match(layout, /href="https:\/\/github\.com\/\{\{ site\.repository \}\}\/blob\/main\/CONTRIBUTING\.md"[^>]*>[^<]*Contribut/iu);
+  assert.match(layout, /href="https:\/\/github\.com\/\{\{ site\.repository \}\}\/blob\/main\/LICENSE"[^>]*>[^<]*License/iu);
+  assert.match(layout, /source catalog/iu);
+  assert.match(layout, /current (?:job )?(?:openings|vacancies)/iu);
 });
 
 test("escaped catalog JSON cannot terminate its script element and remains parseable", () => {
@@ -69,6 +82,10 @@ test("results include live count, semantic card template, and initial states", a
   assert.match(results, /data-catalog-link/u);
   assert.match(results, /data-catalog-empty[^>]+hidden/u);
   assert.match(results, /data-catalog-error[^>]+hidden/u);
+  assert.match(results, /data-catalog-empty[\s\S]*data-catalog-clear/u);
+  assert.match(results, /data-catalog-empty[\s\S]*CONTRIBUTING\.md/iu);
+  assert.match(results, /data-catalog-error[\s\S]*#readme/iu);
+  assert.match(results, /data-catalog-error[\s\S]*https:\/\/openings\.dev/iu);
 });
 
 test("results render navigable catalog cards before JavaScript initializes", async () => {
@@ -112,6 +129,7 @@ test("catalog stylesheet provides responsive layout and accessibility safeguards
   assert.match(css, /max-width:\s*1180px/u);
   assert.match(css, /repeat\(auto-fit,\s*minmax\(/u);
   assert.match(css, /repeat\(auto-fill,\s*minmax\(/u);
+  assert.match(css, /\.site-header nav,\s*\.site-footer nav\s*\{[^}]*display:\s*flex[^}]*gap:/su);
   assert.match(css, /:focus-visible/u);
   assert.match(css, /\[hidden\]\s*\{[^}]*display:\s*none\s*!important/su);
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/u);
