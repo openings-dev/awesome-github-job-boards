@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -36,19 +36,39 @@ async function repository(t) {
   return worktree;
 }
 
-test("accepts historical records and binary files in a git worktree", async (t) => {
+test("accepts only the two exact historical records and binary files in a git worktree", async (t) => {
   const worktree = await repository(t);
   await mkdir(path.join(worktree, "docs/superpowers/specs"), { recursive: true });
   await mkdir(path.join(worktree, "docs/superpowers/plans"), { recursive: true });
-  await writeFile(path.join(worktree, "docs/superpowers/specs/history.md"), `${oldSlug}\n`);
-  await writeFile(path.join(worktree, "docs/superpowers/plans/history.md"), `${oldTitle}\n`);
+  await writeFile(
+    path.join(worktree, "docs/superpowers/specs/2026-09-16-awesome-github-job-boards-design.md"),
+    `${oldSlug}\n`,
+  );
+  await writeFile(
+    path.join(worktree, "docs/superpowers/plans/2026-09-16-awesome-github-job-boards.md"),
+    `${oldTitle}\n`,
+  );
   await writeFile(path.join(worktree, "asset.bin"), Buffer.from([0, ...Buffer.from(oldSlug)]));
-  git(worktree, "add", ".");
+  git(worktree, "add", "-f", ".");
 
   const result = check(worktree);
 
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /canonical name check passed/iu);
+});
+
+test("reports old terms in other files under historical directories", async (t) => {
+  const worktree = await repository(t);
+  await mkdir(path.join(worktree, "docs/superpowers/specs"), { recursive: true });
+  await writeFile(path.join(worktree, "docs/superpowers/specs/new-record.md"), `${oldSlug}\n`);
+  git(worktree, "add", "-f", ".");
+  assert.match(git(worktree, "ls-files"), /docs\/superpowers\/specs\/new-record\.md/u);
+
+  const result = check(worktree);
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /docs\/superpowers\/specs\/new-record\.md/u);
+  assert.match(result.stderr, new RegExp(oldSlug, "u"));
 });
 
 test("reports every old canonical-name term in tracked text files", async (t) => {
@@ -67,6 +87,56 @@ test("reports every old canonical-name term in tracked text files", async (t) =>
 test("does not scan untracked files", async (t) => {
   const worktree = await repository(t);
   await writeFile(path.join(worktree, "scratch.txt"), `${oldSlug}\n`);
+
+  const result = check(worktree);
+
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test("reads a clean symlink from the index without following its external target", async (t) => {
+  const worktree = await repository(t);
+  const external = path.join(path.dirname(worktree), "outside.txt");
+  await writeFile(external, `${oldSlug}\n`);
+  await symlink(external, path.join(worktree, "external-link"));
+  git(worktree, "add", "external-link");
+
+  const result = check(worktree);
+
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test("reports an old term stored in a symlink blob", async (t) => {
+  const worktree = await repository(t);
+  await symlink(oldSlug, path.join(worktree, "bad-link"));
+  git(worktree, "add", "bad-link");
+
+  const result = check(worktree);
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, new RegExp(`bad-link: ${oldSlug}`, "u"));
+});
+
+test("does not crash on a clean broken symlink", async (t) => {
+  const worktree = await repository(t);
+  await symlink("missing-target", path.join(worktree, "broken-link"));
+  git(worktree, "add", "broken-link");
+
+  const result = check(worktree);
+
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test("ignores gitlink contents instead of opening the nested repository", async (t) => {
+  const worktree = await repository(t);
+  const nested = path.join(worktree, "dependency");
+  await mkdir(nested);
+  git(nested, "init", "-q");
+  git(nested, "config", "user.email", "test@example.com");
+  git(nested, "config", "user.name", "Test User");
+  await writeFile(path.join(nested, "README.md"), `${oldTitle}\n`);
+  git(nested, "add", "README.md");
+  git(nested, "commit", "-qm", "nested");
+  git(worktree, "add", "dependency");
 
   const result = check(worktree);
 

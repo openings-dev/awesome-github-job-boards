@@ -1,14 +1,16 @@
-import { readFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 
 const forbiddenTerms = [
   ["awesome-github", "issues-job-boards"].join("-"),
   ["Awesome GitHub", "Issues Job Boards"].join(" "),
 ];
-const historicalDirectories = ["docs/superpowers/specs/", "docs/superpowers/plans/"];
+const historicalFiles = new Set([
+  "docs/superpowers/plans/2026-09-16-awesome-github-job-boards.md",
+  "docs/superpowers/specs/2026-09-16-awesome-github-job-boards-design.md",
+]);
 
-function trackedFiles() {
-  const result = spawnSync("git", ["ls-files", "-z"], {
+function runGit(arguments_) {
+  const result = spawnSync("git", arguments_, {
     cwd: process.cwd(),
     encoding: "buffer",
     maxBuffer: 100 * 1024 * 1024,
@@ -18,11 +20,21 @@ function trackedFiles() {
     process.exit(result.status ?? 1);
   }
 
-  return result.stdout.toString("utf8").split("\0").filter(Boolean);
+  return result.stdout;
 }
 
-function isHistorical(file) {
-  return historicalDirectories.some((directory) => file.startsWith(directory));
+function trackedEntries() {
+  const output = runGit(["ls-files", "-s", "-z"]);
+
+  return output.toString("utf8").split("\0").filter(Boolean).map((entry) => {
+    const tab = entry.indexOf("\t");
+    const [mode, object, stage] = entry.slice(0, tab).split(" ");
+    return { mode, object, stage, path: entry.slice(tab + 1) };
+  });
+}
+
+function readBlob(object) {
+  return runGit(["cat-file", "blob", object]);
 }
 
 function decodeText(buffer) {
@@ -35,18 +47,23 @@ function decodeText(buffer) {
 }
 
 const matches = [];
-for (const file of trackedFiles()) {
-  if (isHistorical(file)) continue;
-  const text = decodeText(await readFile(file));
+for (const { mode, object, stage, path } of trackedEntries()) {
+  if (historicalFiles.has(path)) continue;
+  // A gitlink identifies another repository commit, not a file blob owned by this repository.
+  if (mode === "160000") continue;
+  const text = decodeText(readBlob(object));
   if (text === null) continue;
   for (const term of forbiddenTerms) {
-    if (text.includes(term)) matches.push({ file, term });
+    if (text.includes(term)) matches.push({ path, stage, term });
   }
 }
 
 if (matches.length > 0) {
   process.stderr.write("Found references to the previous project name:\n");
-  for (const { file, term } of matches) process.stderr.write(`${file}: ${term}\n`);
+  for (const { path, stage, term } of matches) {
+    const stageLabel = stage === "0" ? "" : ` (index stage ${stage})`;
+    process.stderr.write(`${path}${stageLabel}: ${term}\n`);
+  }
   process.exitCode = 1;
 } else {
   process.stdout.write("Canonical name check passed.\n");
